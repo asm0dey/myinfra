@@ -20,7 +20,7 @@ if host.get_fact(LinuxName) in ["Arch", "Manjaro Linux", "EndeavourOS"]:
     pacman.upgrade()
     pacman.packages(packages=["docker"], present=True)
 
-docker_installed, stdout, stderr = host.run_shell_command("which docker")
+docker_installed, _ = host.run_shell_command("which docker")
 
 if docker_installed:
     server.shell(name="Docker container prune", commands=["docker container prune -f"])

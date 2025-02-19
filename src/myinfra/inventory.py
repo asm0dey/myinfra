@@ -2,7 +2,7 @@ debuntu = [
     "calcom",
     "blog2",
     "nextcloud",
-    "mailbox",
+    # "mailbox",
     "ward",
 ]
 
