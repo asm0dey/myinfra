@@ -13,7 +13,7 @@ if host.get_fact(LinuxName) in ["Ubuntu", "Debian"]:
     )
     apt.dist_upgrade()
     if host.get_fact(File, "/var/run/reboot-required") is not None:
-        logger.info("Reboot required!")
+        logger.info(f"Reboot required for host {host.name}!")
 
 if host.get_fact(LinuxName) in ["Arch", "Manjaro Linux", "EndeavourOS"]:
     pacman.update()
