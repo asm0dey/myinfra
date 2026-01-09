@@ -1,11 +1,12 @@
 debuntu = [
     "calcom",
-    "blog2",
+    "blog",
     "nextcloud",
+    "ort-club",
     # "mailbox",
     "ward",
 ]
 
 arch = [
-    "192.168.0.227",
+    "kodi",
 ]

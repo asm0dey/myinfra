@@ -1,0 +1,33 @@
+  File "/home/finkel/work_self/myinfra/.venv/lib/python3.14/site-packages/pyinfra_cli/cli.py", line 250, in cli
+    _main(*args, **kwargs)
+    ~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/finkel/work_self/myinfra/.venv/lib/python3.14/site-packages/pyinfra_cli/cli.py", line 387, in _main
+    can_diff, state, config = _handle_commands(
+                              ~~~~~~~~~~~~~~~~^
+        state, config, command, original_operations, operations
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/finkel/work_self/myinfra/.venv/lib/python3.14/site-packages/pyinfra_cli/cli.py", line 718, in _handle_commands
+    state, config, operations = _prepare_deploy_operations(state, config, operations)
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/finkel/work_self/myinfra/.venv/lib/python3.14/site-packages/pyinfra_cli/cli.py", line 779, in _prepare_deploy_operations
+    load_deploy_file(state, filename)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/finkel/work_self/myinfra/.venv/lib/python3.14/site-packages/pyinfra_cli/util.py", line 235, in load_deploy_file
+    _parallel_load_hosts(state, lambda: exec_file(filename), filename)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/finkel/work_self/myinfra/.venv/lib/python3.14/site-packages/pyinfra_cli/util.py", line 229, in _parallel_load_hosts
+    raise result
+  File "/home/finkel/work_self/myinfra/.venv/lib/python3.14/site-packages/pyinfra_cli/util.py", line 209, in load_file
+    callback()
+    ~~~~~~~~^^
+  File "/home/finkel/work_self/myinfra/.venv/lib/python3.14/site-packages/pyinfra_cli/util.py", line 235, in <lambda>
+    _parallel_load_hosts(state, lambda: exec_file(filename), filename)
+                                        ~~~~~~~~~^^^^^^^^^^
+  File "/home/finkel/work_self/myinfra/.venv/lib/python3.14/site-packages/pyinfra_cli/util.py", line 57, in exec_file
+    code = compile(code_str, filename, "exec")
+  File "src/myinfra/apt.py", line 45
+    Yes, files.block can work here, and it will even create the file if it doesn’t exist—but it’s usually not the best fit for a systemd override because it writes your content surrounded by markers (BEGIN/END) rather than making the file contain exactly [Service]\nUser=root.
+                                                                                ^
+SyntaxError: invalid character '’' (U+2019)

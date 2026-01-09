@@ -1,27 +1,37 @@
 from pyinfra import logger
 from pyinfra.context import config, host
-from pyinfra.facts.files import File
-from pyinfra.facts.server import LinuxName
-from pyinfra.operations import apt, pacman, server
+from pyinfra.facts.server import LinuxName, RebootRequired, Which
+from pyinfra.operations import apt, docker, files, pacman
 
 config.SUDO = True
 config.PARALLEL = 3
 
 if host.get_fact(LinuxName) in ["Ubuntu", "Debian"]:
-    apt.update(
-        name="Update apt repos",
+    _ = apt.update(name="Update apt repos", _sudo=True)
+    _ = apt.dist_upgrade(_sudo=True)
+    _ = apt.packages(
+        name="Install unattended-upgrades",
+        packages=["unattended-upgrades"],
+        update=True,
+        present=True,
+        _sudo=True,
     )
-    apt.dist_upgrade()
-    if host.get_fact(File, "/var/run/reboot-required") is not None:
-        logger.info(f"Reboot required for host {host.name}!")
+    for origin in ("updates", "proposed", "backports"):
+        _ = files.line(
+            path="/etc/apt/apt.conf.d/50unattended-upgrades",
+            line=r'^\s*//\s*"${distro_id}:${distro_codename}-' + origin + '";',
+            replace='"${distro_id}:${distro_codename}-' + origin + '";',
+            name="Enable unattended upgrades",
+            _sudo=True,
+        )
 
-if host.get_fact(LinuxName) in ["Arch", "Manjaro Linux", "EndeavourOS"]:
-    pacman.update()
-    pacman.upgrade()
-    pacman.packages(packages=["docker"], present=True)
+if host.get_fact(LinuxName) in ["Arch", "Manjaro Linux", "EndeavourOS", "CachyOS"]:
+    _ = pacman.update()
+    _ = pacman.upgrade()
+    _ = pacman.packages(packages=["docker"], present=True)
 
-docker_installed, _ = host.run_shell_command("which docker")
+if host.get_fact(Which, "docker"):
+    _ = docker.prune(_sudo=True)
 
-if docker_installed:
-    server.shell(name="Docker container prune", commands=["docker container prune -f"])
-    server.shell(name="Docker image prune", commands=["docker image prune -af"])
+if host.get_fact(RebootRequired):
+    logger.info("Reboot required")

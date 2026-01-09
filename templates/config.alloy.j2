@@ -1,0 +1,59 @@
+logging {
+  level = "warn"
+}
+
+prometheus.exporter.unix "node_metrics" {
+  include_exporter_metrics = true
+}
+
+prometheus.exporter.cadvisor "docker_metrics" {
+  docker_only = true
+}
+
+prometheus.remote_write "nextcloud" {
+  endpoint {
+    url = "{{ mimir_url }}"
+
+    basic_auth {
+      username = "{{ mimir_username }}"
+      password = "{{ mimir_password }}"
+    }
+  }
+}
+
+prometheus.relabel "filter_metrics" {
+  rule {
+    action        = "drop"
+    source_labels = ["env"]
+    regex         = "dev"
+  }
+  rule {
+    target_label = "instance"
+    replacement  = "{{ host.name }}"
+  }
+
+  rule {
+    target_label = "alloy_hostname"
+    replacement  = "{{ host.name }}"
+  }
+  forward_to = [prometheus.remote_write.nextcloud.receiver]
+}
+
+prometheus.scrape "default" {
+  targets = array.concat(
+    prometheus.exporter.unix.node_metrics.targets,
+    prometheus.exporter.cadvisor.docker_metrics.targets,
+    [{
+      job         = "alloy",
+      __address__ = "127.0.0.1:12345",
+    }],
+    [{
+      job         = "fail2ban",
+      __address__ = "127.0.0.1:9191",
+    }],
+  )
+
+  forward_to = [prometheus.relabel.filter_metrics.receiver]
+  scrape_interval = "5s"
+  scrape_timeout = "5s"
+}
