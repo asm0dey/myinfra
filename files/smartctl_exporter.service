@@ -1,0 +1,13 @@
+[Unit]
+Description=smartctl Prometheus Exporter
+Wants=network-online.target
+After=network-online.target fail2ban.service
+
+[Service]
+User=root
+Group=root
+ExecStart=/usr/local/bin/smartctl_exporter --web.listen-address=127.0.0.1:9633
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

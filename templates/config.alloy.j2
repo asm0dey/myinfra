@@ -47,10 +47,12 @@ prometheus.scrape "default" {
       job         = "alloy",
       __address__ = "127.0.0.1:12345",
     }],
+    {% for item in job_specs %}
     [{
-      job         = "fail2ban",
-      __address__ = "127.0.0.1:9191",
+      job         = "{{ item.job_name }}",
+      __address__ = "{{ item.address }}",
     }],
+    {% endfor %}
   )
 
   forward_to = [prometheus.relabel.filter_metrics.receiver]
