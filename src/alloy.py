@@ -190,6 +190,7 @@ def install_exporter(
             f'rm -rf "{tmp_dir}"',
         ],
         _sudo=True,
+        _if=download_op.did_change
     )
 
     # 6) Install/refresh systemd unit

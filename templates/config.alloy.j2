@@ -10,6 +10,13 @@ prometheus.exporter.cadvisor "docker_metrics" {
   docker_only = true
 }
 
+prometheus.exporter.process "process_metrics" {
+  matcher {
+    name    = "{% raw %}{{.Comm}}{% endraw %}"
+    cmdline = [".+"]
+  }
+}
+
 prometheus.remote_write "nextcloud" {
   endpoint {
     url = "{{ mimir_url }}"
@@ -43,6 +50,7 @@ prometheus.scrape "default" {
   targets = array.concat(
     prometheus.exporter.unix.node_metrics.targets,
     prometheus.exporter.cadvisor.docker_metrics.targets,
+    prometheus.exporter.process.process_metrics.targets,
     [{
       job         = "alloy",
       __address__ = "127.0.0.1:12345",
