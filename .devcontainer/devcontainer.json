@@ -2,6 +2,6 @@
   "name": "Python 3",
   "image": "mcr.microsoft.com/devcontainers/python:3-3.12",
   "features": {
-    "ghcr.io/devcontainers/features/conda:1": {}
+    "ghcr.io/devcontainers/features/conda:2": {}
   }
 }
